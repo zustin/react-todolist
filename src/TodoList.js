@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import axios from 'axios';
 import TodoItem from './TodoItem';
 import './style.css';
@@ -8,17 +9,29 @@ class TodoList extends Component {
     super(props)
     this.state = {
       inputValue: '',
-      list: []
+      list: [],
+      show: true
     }
 
     this.handleInputChange = this.handleInputChange.bind(this)
     this.handleBtnClick = this.handleBtnClick.bind(this)
     this.handleItemClick = this.handleItemClick.bind(this)
+    this.handleToggle = this.handleToggle.bind(this)
   }
 
   render() {
     return (
       <Fragment>
+        <CSSTransition
+          in={this.state.show}
+          timeout={1000}
+          classNames="fade"
+          unmountOnExit
+          appear={true}
+        >
+          <p>hello world</p>
+        </CSSTransition>
+        <button onClick={this.handleToggle}>是否显示</button>
         <div>
           {/* 下面是一个input */}
           <label htmlFor="insertArea">输入内容：</label>
@@ -31,7 +44,9 @@ class TodoList extends Component {
           />
           <button onClick={this.handleBtnClick}>添加</button>
         </div>
-        <ul>{this.getTodoItem()}</ul>
+        <ul>
+          <TransitionGroup>{this.getTodoItem()}</TransitionGroup>
+        </ul>
       </Fragment>
     )
   }
@@ -51,14 +66,27 @@ class TodoList extends Component {
   getTodoItem() {
     return this.state.list.map((item, index) => {
       return (
-        <TodoItem 
+        <CSSTransition
           key={index} 
-          content={item} 
-          index={index}
-          deleteItem={this.handleItemClick}
-        />
+          timeout={1000}
+          classNames="fade"
+          unmountOnExit
+          appear={true}
+        >
+          <TodoItem 
+            content={item} 
+            index={index}
+            deleteItem={this.handleItemClick}
+          />
+        </CSSTransition>
       )
     })
+  }
+
+  handleToggle() {
+    this.setState((prevState) => ({
+      show: !prevState.show
+    }))
   }
 
   handleInputChange(e) {
